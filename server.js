@@ -11,7 +11,8 @@ import passport from 'passport';
 import { getHomeData,addToCart} from './controllers/HomeData.js';
 import { getProductById} from './controllers/product.js';
 import './authentification.js';
-import { getCart } from './controllers/cart.js';
+import { getCart,deleteProduct } from './controllers/cart.js';
+import { incrementCart,decrementCart,verifyCoupon } from './controllers/cart.js';
 
 // Création du serveur
 let app = express();
@@ -67,6 +68,14 @@ app.get('/product/:id',getProductById)
 app.post('/addtocart',addToCart);
 
 app.get('/cart',getCart);
+
+app.delete('/cart/:id',deleteProduct);
+
+app.put('/cart/increment',incrementCart);
+
+app.put('/cart/decrement',decrementCart);
+
+app.post('/cart/coupon',verifyCoupon);
 
 // Démarrage du serveur
 app.listen(process.env.PORT);

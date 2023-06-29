@@ -19,12 +19,23 @@ const createDatabase = async (connectionPromise) => {
         CREATE TABLE products (
               id INTEGER PRIMARY KEY,
               name TEXT,
-              price TEXT,
+              price Numeric,
               description TEXT,
               image TEXT,
               category TEXT,
               quantity INTEGER
             );
+
+            CREATE TABLE reviews (
+              id INTEGER PRIMARY KEY,
+              product_id INTEGER,
+              title TEXT,
+              reviewer_name TEXT,
+              rating INTEGER,
+              comment TEXT,
+              FOREIGN KEY (product_id) REFERENCES products(id)
+            );
+            
             
             CREATE TABLE cart (
               id INTEGER PRIMARY KEY,
@@ -32,6 +43,24 @@ const createDatabase = async (connectionPromise) => {
               quantity INTEGER,
               FOREIGN KEY (productId) REFERENCES products (id)
             );
+
+            CREATE TABLE coupons (
+              id INTEGER PRIMARY KEY,
+              code TEXT UNIQUE,
+              discount NUMERIC,
+              expiration_date TEXT,
+              description TEXT
+            );
+
+            CREATE TABLE cart_coupons (
+              cart_id INTEGER,
+              coupon_id INTEGER,
+              PRIMARY KEY (cart_id, coupon_id),
+              FOREIGN KEY (cart_id) REFERENCES cart(id),
+              FOREIGN KEY (coupon_id) REFERENCES coupons(id)
+            );
+            
+            
 
             -- Electronics
 INSERT INTO products (name, price, description, image, category, quantity)
@@ -113,6 +142,32 @@ VALUES ('Mountain Bike', '$499', 'Durable and versatile bike for off-road cyclin
 INSERT INTO products (name, price, description, image, category, quantity)
 VALUES ('Waterproof Hiking Backpack', '$79', 'Spacious backpack for hiking and outdoor adventures.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Sports & Outdoors', 8);
 
+INSERT INTO reviews (product_id, title, reviewer_name, rating, comment)
+VALUES (1, 'Impressive Product', 'John Doe', 4, 'Great product, highly recommended.');
+
+INSERT INTO reviews (product_id, title, reviewer_name, rating, comment)
+VALUES (1, 'Excellent Quality', 'Jane Smith', 5, 'Excellent quality, worth the price.');
+
+INSERT INTO reviews (product_id, title, reviewer_name, rating, comment)
+VALUES (1, 'Decent Product', 'David Johnson', 3, 'Good product, but could be better.');
+
+INSERT INTO reviews (product_id, title, reviewer_name, rating, comment)
+VALUES (1, 'Highly Recommended', 'Emily Wilson', 5, 'Amazing features and performance.');
+
+INSERT INTO reviews (product_id, title, reviewer_name, rating, comment)
+VALUES (1, 'Not Durable', 'Michael Brown', 2, 'Not satisfied with the durability.');
+
+INSERT INTO coupons (code, discount, expiration_date, description)
+VALUES ('COUPON1', 0.10, '2024-06-29', '10% off your order!'),
+       ('COUPON2', 0.10, '2024-06-29', '10% off your order!'),
+       ('COUPON3', 0.10, '2024-06-29', '10% off your order!'),
+       ('COUPON4', 0.10, '2024-06-29', '10% off your order!'),
+       ('COUPON5', 0.10, '2024-06-29', '10% off your order!'),
+       ('COUPON6', 0.10, '2024-06-29', '10% off your order!'),
+       ('COUPON7', 0.10, '2024-06-29', '10% off your order!'),
+       ('COUPON8', 0.10, '2024-06-29', '10% off your order!'),
+       ('COUPON9', 0.10, '2024-06-29', '10% off your order!'),
+       ('COUPON10', 0.10, '2024-06-29', '10% off your order!');
 
             
         `
