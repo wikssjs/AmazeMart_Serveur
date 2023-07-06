@@ -6,7 +6,7 @@ import {
   decrementCartModel,
   getCartProductById,
   getSubTotal,
-  verifyCouponModel
+  verifyCouponModel,
 } from "../model/cart.js";
 import { getProductById } from "./product.js";
 

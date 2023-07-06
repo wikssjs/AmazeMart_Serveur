@@ -13,6 +13,8 @@ import { getProductById} from './controllers/product.js';
 import './authentification.js';
 import { getCart,deleteProduct } from './controllers/cart.js';
 import { incrementCart,decrementCart,verifyCoupon } from './controllers/cart.js';
+import { getCategories, getProductsByCategory } from './controllers/categories.js';
+import { getSearchProducts } from './controllers/search.js';
 
 // Création du serveur
 let app = express();
@@ -77,6 +79,11 @@ app.put('/cart/decrement',decrementCart);
 
 app.post('/cart/coupon',verifyCoupon);
 
+app.get('/categories',getCategories);
+
+app.get('/products',getProductsByCategory);
+
+app.get('/searchproducts',getSearchProducts);
 // Démarrage du serveur
 app.listen(process.env.PORT);
 console.log('Serveur démarré: http://localhost:' + process.env.PORT);

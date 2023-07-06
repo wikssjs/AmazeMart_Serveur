@@ -9,12 +9,14 @@ export const getCartModel = async () =>{
 
 export const getCartProductById = async (id) => {
     let connection = await connectionPromise;
+    console.log(id);
     let result = await connection.get(
       `SELECT c.quantity as cart_quantity, p.quantity as product_quantity FROM cart c 
       Inner Join Products p ON p.id = productId
       WHERE productId = ?`,
       id
     );
+    console.log(result);
     return result;
   };
 
