@@ -2,8 +2,9 @@ import { getProducts,addToCartModel} from "../model/home.js"
 import { getProductById } from "./product.js";
 
 export const getHomeData = async (req,res) =>{
+    const userId = Number(req.headers['user-id']);
     res.status(200).json({
-        products: await getProducts(),
+        products: await getProducts(userId),
     })
 }
 
@@ -11,7 +12,8 @@ export const getHomeData = async (req,res) =>{
 export const addToCart = async (req,res) =>{
     let productId = req.body.id;
     let quantity = req.body.quantity;
-    let results = await addToCartModel(productId,quantity);
+    let userId = Number(req.headers['user-id']);
+    let results = await addToCartModel(productId,quantity,userId);
     res.status(201).json({
         cart: results
     });

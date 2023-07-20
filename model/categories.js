@@ -15,6 +15,7 @@ export const getProductsByCategoryModel = async (category) => {
     p.image,
     p.category,
     p.quantity,
+    f.product_id,
     AVG(r.rating) as average_rating,
     COUNT(r.rating) as review_count
 FROM 
@@ -23,6 +24,9 @@ left JOIN
     reviews r 
 ON 
 p.id = r.product_id
+left JOIN favorite_products f
+ON
+p.id = f.product_id
 where category = ?
 GROUP BY 
 p.id,

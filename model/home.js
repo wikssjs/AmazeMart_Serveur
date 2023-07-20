@@ -1,33 +1,39 @@
 import connectionPromise from "./connexion.js";
 
-export const getProducts = async () => {
+export const getProducts = async (userId) => {
   let connection = await connectionPromise;
 
   let results = await connection.all(`SELECT 
-    p.id,
-    p.name,
-    p.price,
-    p.description,
-    p.image,
-    p.category,
-    p.quantity,
-    AVG(r.rating) as average_rating,
-    COUNT(r.rating) as review_count
+  p.id,
+  p.name,
+  p.price,
+  p.description,
+  p.image,
+  p.category,
+  p.quantity,
+  fp.product_id,
+  AVG(r.rating) as average_rating,
+  COUNT(r.rating) as review_count
 FROM 
-    products p 
+  products p 
 left JOIN 
-    reviews r 
+  reviews r 
 ON 
-    p.id = r.product_id
+  p.id = r.product_id
+  left join 
+  favorite_products fp 
+  ON
+  fp.product_id = p.id
+  and fp.user_id=?
 GROUP BY 
-    p.id,
-    p.name,
-    p.price,
-    p.description,
-    p.image,
-    p.category,
-    p.quantity;
-`);
+  p.id,
+  p.name,
+  p.price,
+  p.description,
+  p.image,
+  p.category,
+  p.quantity;
+`,userId);
   return results;
 };
 
@@ -39,22 +45,22 @@ export const getProduct = async (id) => {
   return result;
 };
 
-export const addToCartModel = async (id, quantity) => {
+export const addToCartModel = async (id, quantity,userId) => {
   let connection = await connectionPromise;
-  console.log(id, quantity);
   try {
     let result = await connection.run(
-      "INSERT INTO cart (productId,quantity) VALUES (?,?)",
+      "INSERT INTO cart (productId,quantity,user_id) VALUES (?,?,?)",
       id,
-      quantity
+      quantity,
+      userId
     );
-    console.log(result);
   } catch (e) {
     if (e.code === "SQLITE_CONSTRAINT") {
       await connection.run(
-        "UPDATE cart SET quantity = quantity + ? WHERE productId = ?",
+        "UPDATE cart SET quantity = quantity + ? WHERE productId = ? and user_id = ?",
         quantity,
-        id
+        id,
+        userId
       );
     } else {
       throw e;
@@ -75,3 +81,24 @@ export const getReviews = async (id) => {
   );
   return results;
 };
+
+export const addTofavoriteModel = async (id,userId) => {
+  let connection = await connectionPromise;
+  try{
+
+    let result = await connection.run(
+      "INSERT INTO favorite_products (product_id,user_id) VALUES (?,?)",
+      id,
+      userId
+    );
+  }
+  catch(e){
+    if(e.code === "SQLITE_CONSTRAINT"){
+      await connection.run(
+        "DELETE FROM favorite_products WHERE product_id = ? and user_id = ?",
+        id,
+        userId
+      );
+    }
+  }
+}

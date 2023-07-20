@@ -26,6 +26,32 @@ const createDatabase = async (connectionPromise) => {
               quantity INTEGER
             );
 
+            CREATE TABLE users (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              email TEXT NOT NULL UNIQUE,
+              username TEXT NOT NULL UNIQUE,
+              password TEXT NOT NULL
+            );
+
+            CREATE TABLE favorite_products (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_id INTEGER,
+              product_id INTEGER,
+              FOREIGN KEY (user_id) REFERENCES users (id),
+              FOREIGN KEY (product_id) REFERENCES products (id),
+              UNIQUE(user_id, product_id)
+            );
+            
+            
+
+            CREATE TABLE product_images (
+              id INTEGER PRIMARY KEY,
+              product_id INTEGER,
+              image_url TEXT,
+              FOREIGN KEY (product_id) REFERENCES products (id)
+          );
+          
+
             CREATE TABLE reviews (
               id INTEGER PRIMARY KEY,
               product_id INTEGER,
@@ -39,8 +65,10 @@ const createDatabase = async (connectionPromise) => {
             
             CREATE TABLE cart (
               id INTEGER PRIMARY KEY,
-              productId INTEGER Unique,
+              user_id INTEGER,
+              productId INTEGER,
               quantity INTEGER,
+              FOREIGN KEY (user_id) REFERENCES users (id),
               FOREIGN KEY (productId) REFERENCES products (id)
             );
 

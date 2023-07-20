@@ -9,12 +9,13 @@ import session from 'express-session';
 import memorystore from 'memorystore';
 import passport from 'passport';
 import { getHomeData,addToCart} from './controllers/HomeData.js';
-import { getProductById} from './controllers/product.js';
+import { addToFavorite, getProductById} from './controllers/product.js';
 import './authentification.js';
 import { getCart,deleteProduct } from './controllers/cart.js';
 import { incrementCart,decrementCart,verifyCoupon } from './controllers/cart.js';
 import { getCategories, getProductsByCategory } from './controllers/categories.js';
 import { getSearchProducts } from './controllers/search.js';
+import { registerUser,loginUser } from './controllers/user.js';
 
 // Création du serveur
 let app = express();
@@ -83,7 +84,13 @@ app.get('/categories',getCategories);
 
 app.get('/products',getProductsByCategory);
 
+app.post('/product/addtofavorite',addToFavorite);
+
 app.get('/searchproducts',getSearchProducts);
+
+app.post('/user/register',registerUser);
+
+app.post('/user/login',loginUser);
 // Démarrage du serveur
 app.listen(process.env.PORT);
 console.log('Serveur démarré: http://localhost:' + process.env.PORT);

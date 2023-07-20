@@ -11,16 +11,17 @@ import {
 import { getProductById } from "./product.js";
 
 export const getCart = async (req, res) => {
-    console.log(await getSubTotal())
+    const userId = Number(req.headers['user-id']);
   res.status(200).json({
-    cart: await getCartModel(),
-    subTotal : await getSubTotal()
+    cart: await getCartModel(userId),
+    subTotal : await getSubTotal(userId)
   });
 };
 
 export const deleteProduct = async (req, res) => {
   let productId = req.params.id;
-  let results = await deleteCartProduct(productId);
+  let userId = req.headers['user-id'];
+  let results = await deleteCartProduct(productId,userId);
   res.status(200).json({
     cart: results,
     subTotal : await getSubTotal()
@@ -30,12 +31,12 @@ export const deleteProduct = async (req, res) => {
 export const incrementCart = async (req, res) => {
   const productId = req.body.id;
   const cartProduct = await getCartProductById(productId);
-
+const userId = req.headers['user-id'];
   if (cartProduct.cart_quantity < cartProduct.product_quantity) {
-    let results = await incrementCartModel(productId);
+    let results = await incrementCartModel(productId,userId);
     res.status(201).json({
       cart: results,
-      subTotal : await getSubTotal()
+      subTotal : await getSubTotal(userId)
     });
   }
 };
@@ -43,12 +44,13 @@ export const incrementCart = async (req, res) => {
 export const decrementCart = async (req, res) => {
     const productId = req.body.id;
     const cartProduct = await getCartProductById(productId);
+    const userId = req.headers['user-id'];
   if (cartProduct.cart_quantity > 1) {
     let productId = req.body.id;
-    let results = await decrementCartModel(productId);
+    let results = await decrementCartModel(productId,userId);
     res.status(201).json({
       cart: results,
-      subTotal : await getSubTotal()
+      subTotal : await getSubTotal(userId)
     });
   }
   else{
