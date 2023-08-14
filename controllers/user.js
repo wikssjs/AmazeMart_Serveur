@@ -1,24 +1,27 @@
-import { registerUserModel,getUserByEmailModel,getUserByUsernameModel } from "../model/user.js";
+import { registerUserModel,getUserByEmailModel,
+    changeUserInfosModel,changeUserPasswordModel,
+addUserAdressModel, 
+deleteUserAdressModel,
+getUserAdressModel
+} from "../model/user.js";
 import bcrypt from "bcrypt";
 import Jwt from "jsonwebtoken";
 
 
 export const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
-    console.log(username, email, password);
+    const { fullname, email,phone, password } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const emailExist = await getUserByEmailModel(email);
-    const userExist = await getUserByUsernameModel(username);
     
-    if(emailExist || userExist){
+    if(emailExist){
         res.status(400).json({
             message: "User already exists"
         })
         return ;
     }
 
-    const user = await registerUserModel(username, email, hashedPassword);
+    const user = await registerUserModel(fullname, email,phone, hashedPassword);
 
     res.status(201).json({
         message: "User created successfully",
@@ -46,5 +49,63 @@ export const loginUser = async (req, res) => {
     res.status(200).json({
         message: "User logged in successfully",
         token
+    })
+}
+
+export const changeUserInfos = async (req, res) => {
+    const { fullname, email,phone} = req.body;
+    const userId = req.headers["user-id"];
+    const user = await changeUserInfosModel(fullname, email,phone,userId);
+
+    res.status(200).json({
+        message: "User infos changed successfully",
+        user
+    })
+}
+
+export const changeUserPassword = async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.headers["user-id"];
+    const user = await changeUserPasswordModel(currentPassword, newPassword,userId);
+    if(user){
+        res.status(200).json({
+            message: "User password changed successfully",
+            user
+        })
+    }
+    else{
+        res.status(400).json({
+            message: "Incorrect password"
+        })
+    }
+}
+export const getUserAdress = async (req, res) => {
+    const userId = req.headers["user-id"];
+    const address = await getUserAdressModel(userId);
+
+    res.status(200).json({
+        message: "User adress fetched successfully",
+        address
+    })
+}
+
+export const addUserAdress = async (req, res) => {
+    const userId = req.headers["user-id"];
+    const adress = req.body;
+    const user = await addUserAdressModel(adress,userId);
+
+    res.status(200).json({
+        message: "User adress added successfully",
+        user
+    })
+}
+
+export const deleteUserAdress = async (req, res) => {
+    let userId = req.body.userId;
+    const user = await deleteUserAdressModel(userId);
+
+    res.status(200).json({
+        message: "User adress deleted successfully",
+        user
     })
 }

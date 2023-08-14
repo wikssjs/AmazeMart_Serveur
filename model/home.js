@@ -45,32 +45,48 @@ export const getProduct = async (id) => {
   return result;
 };
 
-export const addToCartModel = async (id, quantity,userId) => {
+export const addToCartModel = async (id, quantity, userId) => {
   let connection = await connectionPromise;
+  console.log(id, quantity, userId);
+  
   try {
-    let result = await connection.run(
-      "INSERT INTO cart (productId,quantity,user_id) VALUES (?,?,?)",
+    // Check if the product already exists in the cart
+    let existingProduct = await connection.get(
+      "SELECT * FROM cart WHERE productId = ? AND user_id = ?",
       id,
-      quantity,
       userId
     );
-  } catch (e) {
-    if (e.code === "SQLITE_CONSTRAINT") {
+
+    if (existingProduct) {
+      // If the product exists, update the quantity
       await connection.run(
-        "UPDATE cart SET quantity = quantity + ? WHERE productId = ? and user_id = ?",
+        "UPDATE cart SET quantity = quantity + ? WHERE productId = ? AND user_id = ?",
         quantity,
         id,
         userId
       );
     } else {
-      throw e;
+      // If the product doesn't exist, insert a new row
+      await connection.run(
+        "INSERT INTO cart (productId, quantity, user_id) VALUES (?, ?, ?)",
+        id,
+        quantity,
+        userId
+      );
     }
+  } catch (e) {
+    throw e;
   }
-  let results = await connection.all(`SELECT * FROM Products p INNER JOIN
-                                        cart c ON p.id = c.productId`);
 
-    return results;
+  // Fetch the updated cart data
+  let results = await connection.all(
+    `SELECT * FROM Products p INNER JOIN cart c ON p.id = c.productId WHERE c.user_id = ?`,
+    userId
+  );
+
+  return results;
 };
+
 
 export const getReviews = async (id) => {
   let connection = await connectionPromise;

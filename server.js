@@ -11,11 +11,12 @@ import passport from 'passport';
 import { getHomeData,addToCart} from './controllers/HomeData.js';
 import { addToFavorite, getProductById} from './controllers/product.js';
 import './authentification.js';
-import { getCart,deleteProduct } from './controllers/cart.js';
+import { getCart,deleteProduct, addToCheckout, getCheckoutProducts } from './controllers/cart.js';
 import { incrementCart,decrementCart,verifyCoupon } from './controllers/cart.js';
 import { getCategories, getProductsByCategory } from './controllers/categories.js';
 import { getSearchProducts } from './controllers/search.js';
-import { registerUser,loginUser } from './controllers/user.js';
+import { registerUser,loginUser, changeUserInfos, changeUserPassword, addUserAdress, deleteUserAdress, getUserAdress } from './controllers/user.js';
+import { getFavoritesProducts, getUserProfile,deleteFavoriteProduct, addCreditCard, deleteCreditCard, getCreditCard, updateCreditCard } from './controllers/account.js';
 
 // Création du serveur
 let app = express();
@@ -91,6 +92,31 @@ app.get('/searchproducts',getSearchProducts);
 app.post('/user/register',registerUser);
 
 app.post('/user/login',loginUser);
+
+app.get('/profile',getUserProfile);
+
+app.put('/profile',changeUserInfos);
+
+app.put('/profile/password',changeUserPassword);
+
+app.get('/address',getUserAdress);
+app.post("/address",addUserAdress);
+
+app.delete("/address",deleteUserAdress);
+
+app.get('/user/favorites',getFavoritesProducts);
+
+app.delete('/user/favorites',deleteFavoriteProduct);
+
+app.post('/user/checkout', addToCheckout);
+app.get('/user/orders', getCheckoutProducts);
+
+app.get('/user/getCreditCard', getCreditCard);
+app.post('/user/addCreditCard', addCreditCard);
+
+app.delete('/user/deleteCreditCard', deleteCreditCard);
+
+app.put('/user/updateCreditCard', updateCreditCard);
 // Démarrage du serveur
 app.listen(process.env.PORT);
 console.log('Serveur démarré: http://localhost:' + process.env.PORT);

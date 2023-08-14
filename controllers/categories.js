@@ -8,7 +8,6 @@ export const getCategories = async (req,res) =>{
 }
 
 export const getProductsByCategory = async (req,res) =>{
-    console.log(req.query.category)
     let results = await getProductsByCategoryModel(req.query.category);
     res.status(200).json({
         products: results

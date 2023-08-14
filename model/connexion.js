@@ -29,9 +29,23 @@ const createDatabase = async (connectionPromise) => {
             CREATE TABLE users (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               email TEXT NOT NULL UNIQUE,
-              username TEXT NOT NULL UNIQUE,
-              password TEXT NOT NULL
+              fullname TEXT NOT NULL UNIQUE,
+              password TEXT NOT NULL,
+              phone TEXT
             );
+
+            Create Table Adresses(
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_id INTEGER,
+              fullname TEXT,
+              street TEXT,
+              city TEXT,
+              state TEXT,
+              zip TEXT,
+              country TEXT,
+              FOREIGN KEY (user_id) REFERENCES users (id)
+            );
+
 
             CREATE TABLE favorite_products (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,6 +86,30 @@ const createDatabase = async (connectionPromise) => {
               FOREIGN KEY (productId) REFERENCES products (id)
             );
 
+            CREATE TABLE checkout (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_id INTEGER,
+              email TEXT,
+              cardHolderName TEXT,
+              cardNumber TEXT,
+              expirationDate TEXT,
+              cvv TEXT,
+              order_date TEXT, -- New column for storing the order date
+              FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+            
+            
+
+            CREATE TABLE checkout_products (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              checkout_id INTEGER,
+              product_id INTEGER,
+              quantity INTEGER,
+              FOREIGN KEY (checkout_id) REFERENCES checkout(id),
+              FOREIGN KEY (product_id) REFERENCES products(id)
+            );
+            
+
             CREATE TABLE coupons (
               id INTEGER PRIMARY KEY,
               code TEXT UNIQUE,
@@ -88,6 +126,18 @@ const createDatabase = async (connectionPromise) => {
               FOREIGN KEY (coupon_id) REFERENCES coupons(id)
             );
             
+
+            CREATE TABLE CARDS (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_id INTEGER UNIQUE,
+              cardType TEXT,
+              cardHolderName TEXT,
+              cardNumber TEXT,
+              expirationDate TEXT,
+              cvv TEXT,
+              FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+
             
 
             -- Electronics

@@ -1,7 +1,6 @@
 import { getSearchProductsModel } from "../model/search.js";
 
 export const getSearchProducts = async (req,res) => {
-    console.log(req.query.search);
     const search = req.query.search;
     const results = await getSearchProductsModel(search);
 

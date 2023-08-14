@@ -7,6 +7,9 @@ import {
   getCartProductById,
   getSubTotal,
   verifyCouponModel,
+  addToCheckoutModel,
+  getCheckoutProductsModel,
+  getUserAdressModel,
 } from "../model/cart.js";
 import { getProductById } from "./product.js";
 
@@ -14,6 +17,7 @@ export const getCart = async (req, res) => {
     const userId = Number(req.headers['user-id']);
   res.status(200).json({
     cart: await getCartModel(userId),
+    adress: await getUserAdressModel(userId),
     subTotal : await getSubTotal(userId)
   });
 };
@@ -62,9 +66,9 @@ export const decrementCart = async (req, res) => {
 
 export const verifyCoupon = async (req,res) =>{
     let coupon = req.body.coupon;
-    let subTotal = await getSubTotal();
+    let subTotal = await getSubTotal( req.headers['user-id']);
     let discount = 0;
-    console.log(await verifyCouponModel(coupon));
+    console.log(subTotal, coupon);
     if(await verifyCouponModel(coupon)){
         discount = subTotal.subTotal * 0.1;
         res.status(200).json({
@@ -79,3 +83,61 @@ export const verifyCoupon = async (req,res) =>{
         message: "Coupon not valid"
     })
 }
+
+
+export const addToCheckout = async (req, res) => {
+  const userId = Number(req.headers["user-id"]);
+  const userInformation = req.body.userInformations;
+  const products = req.body.products;
+
+  const result = await addToCheckoutModel(
+    userId,
+    userInformation,
+    products
+  );
+
+  if (result.success) {
+    res.status(201).json({ message: result.message });
+  } else {
+    res.status(400).json({ message: result.message });
+  }
+}
+
+export const getCheckoutProducts = async (req, res) => {
+  const userId = Number(req.headers["user-id"]);
+  const result = await getCheckoutProductsModel(userId);
+
+  // Group the checkout products data by order_id
+  const groupedData = groupDataByOrderId(result);
+
+  res.status(200).json(groupedData);
+};
+
+const groupDataByOrderId = (data) => {
+  // Create an object to hold the grouped data
+  const groupedData = {};
+
+  data.forEach((item) => {
+    // If the order_id doesn't exist in the groupedData object, create a new entry
+    if (!groupedData[item.order_id]) {
+      groupedData[item.order_id] = {
+        order_id: item.order_id,
+        order_date: item.order_date,
+        products: [],
+      };
+    }
+
+    // Add the product to the corresponding order_id
+    groupedData[item.order_id].products.push({
+      product_id: item.product_id,
+      product_name: item.product_name,
+      price: item.price,
+      quantity: item.quantity,
+      image: item.image,
+      total_price: item.total_order_price,
+    });
+  });
+
+  // Convert the object values back to an array to get the grouped data
+  return Object.values(groupedData);
+};
