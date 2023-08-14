@@ -53,7 +53,6 @@ export const isPasswordValided = (password, passwordConfirm) => {
     passwordConfirm===password;
 }
 export const contactValide=(body)=>{
-    console.log(body);
     return  isTexteValide(body.nom) &&
             isTexteValide(body.prenom) &&
             isEmailValide(body.courriel) &&
