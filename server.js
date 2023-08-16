@@ -17,6 +17,7 @@ import { getCategories, getProductsByCategory } from './controllers/categories.j
 import { getSearchProducts } from './controllers/search.js';
 import { registerUser,loginUser, changeUserInfos, changeUserPassword, addUserAdress, deleteUserAdress, getUserAdress } from './controllers/user.js';
 import { getFavoritesProducts, getUserProfile,deleteFavoriteProduct, addCreditCard, deleteCreditCard, getCreditCard, updateCreditCard } from './controllers/account.js';
+import { getAllUsers, getUserById } from './controllers/admin.js';
 
 // Création du serveur
 let app = express();
@@ -117,6 +118,11 @@ app.post('/user/addCreditCard', addCreditCard);
 app.delete('/user/deleteCreditCard', deleteCreditCard);
 
 app.put('/user/updateCreditCard', updateCreditCard);
+
+
+//admin part
+app.get('/getUsers', getAllUsers);
+app.get('/getUsers/:id', getUserById);
 // Démarrage du serveur
 app.listen(process.env.PORT);
 console.log('Serveur démarré: http://localhost:' + process.env.PORT);
