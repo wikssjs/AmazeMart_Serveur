@@ -31,7 +31,8 @@ const createDatabase = async (connectionPromise) => {
               email TEXT NOT NULL UNIQUE,
               fullname TEXT NOT NULL UNIQUE,
               password TEXT NOT NULL,
-              phone TEXT
+              phone TEXT,
+              member_since TEXT DEFAULT CURRENT_TIMESTAMP
             );
 
             Create Table Adresses(
@@ -105,6 +106,7 @@ const createDatabase = async (connectionPromise) => {
               checkout_id INTEGER,
               product_id INTEGER,
               quantity INTEGER,
+              total Numeric,
               FOREIGN KEY (checkout_id) REFERENCES checkout(id),
               FOREIGN KEY (product_id) REFERENCES products(id)
             );
@@ -138,87 +140,97 @@ const createDatabase = async (connectionPromise) => {
               FOREIGN KEY (user_id) REFERENCES users(id)
             );
 
+
+            CREATE TRIGGER on_delete_product
+                AFTER DELETE ON products
+                BEGIN
+                    DELETE FROM cart WHERE productId = OLD.id;
+                    DELETE FROM favorite_products WHERE product_id = OLD.id;
+                    DELETE FROM product_images WHERE product_id = OLD.id;
+                    DELETE FROM reviews WHERE product_id = OLD.id;
+                END;
+
             
 
             -- Electronics
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Apple AirPods Pro', '$249', 'Wireless earbuds with active noise cancellation.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Electronics', 10);
+VALUES ('Apple AirPods Pro', '249', 'Wireless earbuds with active noise cancellation.', 'airpod.png', 'Electronics', 10);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Samsung 4K Smart TV', '$899', 'Ultra HD LED TV with smart features.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Electronics', 5);
+VALUES ('Samsung 4K Smart TV', '899', 'Ultra HD LED TV with smart features.', 'samsungTv.png', 'Electronics', 5);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Sony PlayStation 5', '$499', 'Next-generation gaming console with immersive experiences.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Electronics', 3);
+VALUES ('Sony PlayStation 5', '499', 'Next-generation gaming console with immersive experiences.', 'play5.png', 'Electronics', 3);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Canon EOS Rebel T7i', '$799', 'Entry-level DSLR camera with high-quality imaging.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Electronics', 8);
+VALUES ('Canon EOS Rebel T7i', '799', 'Entry-level DSLR camera with high-quality imaging.', 'canon.png', 'Electronics', 8);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Dyson V11 Absolute', '$599', 'Powerful cordless vacuum cleaner with advanced features.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Electronics', 12);
+VALUES ('Dyson V11 Absolute', '599', 'Powerful cordless vacuum cleaner with advanced features.', 'dyson.png', 'Electronics', 12);
 
 -- Books
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('The Great Gatsby', '$10.99', 'Classic novel by F. Scott Fitzgerald.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Books', 20);
+VALUES ('The Great Gatsby', '10.99', 'Classic novel by F. Scott Fitzgerald.', 'gasby.png', 'Books', 20);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Becoming', '$14.99', 'Memoir by Michelle Obama.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Books', 15);
+VALUES ('Becoming', '14.99', 'Memoir by Michelle Obama.', 'becoming.png', 'Books', 15);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('The Alchemist', '$9.99', 'Bestselling novel by Paulo Coelho.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Books', 25);
+VALUES ('The Alchemist', '9.99', 'Bestselling novel by Paulo Coelho.', 'alchemist.png', 'Books', 25);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Educated', '$12.99', 'Memoir by Tara Westover.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Books', 18);
+VALUES ('Educated', '12.99', 'Memoir by Tara Westover.', 'educated.png', 'Books', 18);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('To Kill a Mockingbird', '$8.99', 'Classic novel by Harper Lee.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Books', 30);
+VALUES ('To Kill a Mockingbird', '8.99', 'Classic novel by Harper Lee.', 'kill.png', 'Books', 30);
 
 -- Clothing
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Mens Leather Jacket', '$149', 'Stylish leather jacket for men.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Clothing', 7);
+VALUES ('Mens Leather Jacket', '149', 'Stylish leather jacket for men.', 'jacket.png', 'Clothing', 7);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Womens Floral Dress', '$79', 'Elegant floral print dress for women.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Clothing', 10);
+VALUES ('Womens Floral Dress', '79', 'Elegant floral print dress for women.', 'floraldress.png', 'Clothing', 10);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Mens Casual T-Shirt', '$29', 'Comfortable and versatile t-shirt for men.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Clothing', 20);
+VALUES ('Mens Casual T-Shirt', '29', 'Comfortable and versatile t-shirt for men.', 'casual.png', 'Clothing', 20);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Womens Workout Leggings', '$49', 'Stretchy and moisture-wicking leggings for active women.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Clothing', 15);
+VALUES ('Womens Workout Leggings', '49', 'Stretchy and moisture-wicking leggings for active women.', 'workout.png', 'Clothing', 15);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Mens Formal Suit', '$299', 'Classic formal suit for men.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Clothing', 5);
+VALUES ('Mens Formal Suit', '299', 'Classic formal suit for men.', 'suit.png', 'Clothing', 5);
 
 -- Home & Kitchen
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Instant Pot Duo', '$99', 'Multi-functional electric pressure cooker.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Home & Kitchen', 8);
+VALUES ('Instant Pot Duo', '99', 'Multi-functional electric pressure cooker.', 'pot.png', 'Home & Kitchen', 8);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('KitchenAid Stand Mixer', '$299', 'Powerful stand mixer for baking and cooking.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Home & Kitchen', 6);
+VALUES ('KitchenAid Stand Mixer', '299', 'Powerful stand mixer for baking and cooking.', 'mixer.png', 'Home & Kitchen', 6);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Shark Navigator Vacuum', '$199', 'Upright vacuum cleaner with strong suction power.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Home & Kitchen', 10);
+VALUES ('Shark Navigator Vacuum', '199', 'Upright vacuum cleaner with strong suction power.', 'vacuum.png', 'Home & Kitchen', 10);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Cuisinart Coffee Maker', '$89', 'Programmable coffee maker for brewing delicious coffee.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Home & Kitchen', 15);
+VALUES ('Cuisinart Coffee Maker', '89', 'Programmable coffee maker for brewing delicious coffee.', 'cofee.png', 'Home & Kitchen', 15);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Nespresso VertuoPlus', '$179', 'Single-serve coffee machine for espresso and coffee.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Home & Kitchen', 12);
+VALUES ('Nespresso VertuoPlus', '179', 'Single-serve coffee machine for espresso and coffee.', 'nepreso.png', 'Home & Kitchen', 12);
 
 -- Sports & Outdoors
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Yoga Mat', '$29.99', 'Non-slip exercise mat for yoga and fitness.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Sports & Outdoors', 20);
+VALUES ('Yoga Mat', '29.99', 'Non-slip exercise mat for yoga and fitness.', 'yogamat.png', 'Sports & Outdoors', 20);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Outdoor Camping Tent', '$149', 'Spacious tent for outdoor camping adventures.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Sports & Outdoors', 5);
+VALUES ('Outdoor Camping Tent', '149', 'Spacious tent for outdoor camping adventures.', 'tent.png', 'Sports & Outdoors', 5);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Running Shoes', '$99', 'Lightweight and cushioned shoes for running.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Sports & Outdoors', 15);
+VALUES ('Running Shoes', '99', 'Lightweight and cushioned shoes for running.', 'running.png', 'Sports & Outdoors', 15);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Mountain Bike', '$499', 'Durable and versatile bike for off-road cycling.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Sports & Outdoors', 3);
+VALUES ('Mountain Bike', '499', 'Durable and versatile bike for off-road cycling.', 'bike.png', 'Sports & Outdoors', 3);
 
 INSERT INTO products (name, price, description, image, category, quantity)
-VALUES ('Waterproof Hiking Backpack', '$79', 'Spacious backpack for hiking and outdoor adventures.', 'https://i5.walmartimages.com/asr/0a4daa53-2aea-46b4-b5d5-9b04c7a416e9.7bd167d319855b52f0bd56ff7dc2544b.jpeg', 'Sports & Outdoors', 8);
+VALUES ('Waterproof Hiking Backpack', '79', 'Spacious backpack for hiking and outdoor adventures.', 'backpack.png', 'Sports & Outdoors', 8);
 
 INSERT INTO reviews (product_id, title, reviewer_name, rating, comment)
 VALUES (1, 'Impressive Product', 'John Doe', 4, 'Great product, highly recommended.');

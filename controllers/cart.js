@@ -22,7 +22,7 @@ export const getCart = async (req, res) => {
   });
 };
 
-export const deleteProduct = async (req, res) => {
+export const deleteProductCart = async (req, res) => {
   let productId = req.params.id;
   let userId = req.headers['user-id'];
   let results = await deleteCartProduct(productId,userId);
@@ -105,11 +105,19 @@ export const addToCheckout = async (req, res) => {
 
 export const getCheckoutProducts = async (req, res) => {
   const userId = Number(req.headers["user-id"]);
-  const result = await getCheckoutProductsModel(userId);
+  let result;
+
+  if(userId){
+
+    result = await getCheckoutProductsModel(userId);
+  }
+  else{
+    result = await getCheckoutProductsModel();
+  }
 
   // Group the checkout products data by order_id
   const groupedData = groupDataByOrderId(result);
-
+console.log(groupedData);
   res.status(200).json(groupedData);
 };
 
@@ -123,6 +131,8 @@ const groupDataByOrderId = (data) => {
       groupedData[item.order_id] = {
         order_id: item.order_id,
         order_date: item.order_date,
+        total_price: item.total_order_price,
+
         products: [],
       };
     }
@@ -134,7 +144,6 @@ const groupDataByOrderId = (data) => {
       price: item.price,
       quantity: item.quantity,
       image: item.image,
-      total_price: item.total_order_price,
     });
   });
 

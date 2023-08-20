@@ -7,6 +7,7 @@ export const getCategoriesModel = async () => {
 };
 export const getProductsByCategoryModel = async (category) => {
   let connection = await connectionPromise;
+  console.log(category);
   let results = await connection.all(
     `select p.id,
     p.name,

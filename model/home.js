@@ -92,7 +92,9 @@ export const getReviews = async (id) => {
   let connection = await connectionPromise;
 
   let results = await connection.all(
-    "SELECT * FROM reviews WHERE product_id = ?",
+  `SELECT r.*,p.name FROM reviews r
+  INNER JOIN products p ON p.id = r.product_id
+  WHERE product_id = ?`,
     id
   );
   return results;
