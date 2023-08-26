@@ -12,7 +12,7 @@ import passport from 'passport';
 import { getHomeData,addToCart} from './controllers/HomeData.js';
 import { addToFavorite, getProductById} from './controllers/product.js';
 import './authentification.js';
-import { getCart,deleteProductCart, addToCheckout, getCheckoutProducts } from './controllers/cart.js';
+import { getCart,deleteProductCart, addToCheckout, getCheckoutProducts,getCartCount } from './controllers/cart.js';
 import { incrementCart,decrementCart,verifyCoupon } from './controllers/cart.js';
 import { getCategories, getProductsByCategory } from './controllers/categories.js';
 import { getSearchProducts } from './controllers/search.js';
@@ -80,10 +80,10 @@ app.delete('/admin/deleteReview',deleteReview)
 app.post('/addProduct',upload.single('image'),addProduct)
 app.put('/product/:id',updateProduct)
 app.delete('/product',deleteProduct)
-
 app.post('/addtocart',addToCart);
 
 app.get('/cart',getCart);
+app.get('/cartCount',getCartCount)
 
 app.delete('/cart/:id',deleteProductCart);
 

@@ -12,6 +12,15 @@ export const getCartModel = async (userId) => {
   return results;
 };
 
+export const getCartCountModel = async (userId) => {
+  let connection = await connectionPromise;
+  let result = await connection.get(
+    `SELECT COUNT(*) as count FROM cart WHERE user_id = ?`,
+    userId
+  );
+  return result;
+};
+
 export const getUserAdressModel = async (userId) => {
   let connection = await connectionPromise;
   let result = await connection.get(
@@ -115,16 +124,15 @@ export const addToCheckoutModel = async (userId, userInformation, products) => {
   try {
       connection = await connectionPromise;
       const { email, cardHolderName, cardNumber, expirationDate, cvv } = userInformation;
-      const orderDate = new Date().toLocaleString; // Get the current date in ISO format
   
       // Begin a transaction to ensure all inserts succeed or fail together
       await connection.run('BEGIN TRANSACTION');
   
       // Insert user-specific information and order date into the checkout table
       const result = await connection.run(`
-        INSERT INTO checkout (user_id, email, cardHolderName, cardNumber, expirationDate, cvv, order_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-      `, userId, email, cardHolderName, cardNumber, expirationDate, cvv, orderDate);
+        INSERT INTO checkout (user_id, email, cardHolderName, cardNumber, expirationDate, cvv)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `, userId, email, cardHolderName, cardNumber, expirationDate, cvv);
   
       const checkoutId = result.lastID; // Get the last inserted row ID (checkout ID)
   

@@ -1,5 +1,6 @@
 import { getProducts,addToCartModel} from "../model/home.js"
 import { getProductById } from "./product.js";
+import { getCartModel } from "../model/cart.js";
 
 export const getHomeData = async (req,res) =>{
     const userId = Number(req.headers['user-id']);
@@ -14,7 +15,8 @@ export const addToCart = async (req,res) =>{
     let quantity = req.body.quantity;
     let userId = Number(req.headers['user-id']);
     let results = await addToCartModel(productId,quantity,userId);
+    console.log((await getCartModel(userId)).length + " cart count");
     res.status(201).json({
-        cart: results
+        cart: results,
     });
 }

@@ -40,5 +40,7 @@ p.quantity
 `,
     category
   );
+  console.log(category);
+  console.log(results);
   return results;
 };

@@ -95,7 +95,7 @@ const createDatabase = async (connectionPromise) => {
               cardNumber TEXT,
               expirationDate TEXT,
               cvv TEXT,
-              order_date TEXT, -- New column for storing the order date
+              order_date DATETIME DEFAULT CURRENT_TIMESTAMP , -- New column for storing the order date
               FOREIGN KEY (user_id) REFERENCES users(id)
             );
             

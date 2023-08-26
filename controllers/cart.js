@@ -10,6 +10,7 @@ import {
   addToCheckoutModel,
   getCheckoutProductsModel,
   getUserAdressModel,
+  getCartCountModel,
 } from "../model/cart.js";
 import { getProductById } from "./product.js";
 
@@ -21,6 +22,17 @@ export const getCart = async (req, res) => {
     subTotal : await getSubTotal(userId)
   });
 };
+
+export const getCartCount = async (req, res) => {
+  const userId = Number(req.headers['user-id']);
+  console.log(userId + " user id");
+  console.log((await getCartModel(userId)).length + " cart count");
+  res.status(200).json({
+    cartCount: (await getCartModel(userId)).length,
+  });
+
+};
+
 
 export const deleteProductCart = async (req, res) => {
   let productId = req.params.id;

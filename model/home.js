@@ -104,7 +104,7 @@ export const addTofavoriteModel = async (id,userId) => {
   let connection = await connectionPromise;
   try{
 
-    let result = await connection.run(
+    await connection.run(
       "INSERT INTO favorite_products (product_id,user_id) VALUES (?,?)",
       id,
       userId
@@ -119,4 +119,41 @@ export const addTofavoriteModel = async (id,userId) => {
       );
     }
   }
+  let result = await connection.get(
+    `SELECT 
+    p.id,
+    p.name,
+    p.price,
+    p.description,
+    p.image,
+    p.category,
+    p.quantity,
+    fp.product_id,
+    AVG(r.rating) as average_rating,
+    COUNT(r.rating) as review_count
+  FROM 
+    products p 
+  left JOIN 
+    reviews r 
+  ON 
+    p.id = r.product_id
+    left join 
+    favorite_products fp 
+    ON
+    fp.product_id = p.id
+    and fp.user_id=?
+    where p.id =?
+
+  GROUP BY 
+    p.id,
+    p.name,
+    p.price,
+    p.description,
+    p.image,
+    p.category,
+    p.quantity;`,
+    userId
+    ,id
+  );
+  return result;
 }

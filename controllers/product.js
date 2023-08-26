@@ -23,10 +23,8 @@ export const addToFavorite = async (req,res) =>{
     }
 
     catch(e){
-        
-    res.status(200).json({
-        message: "added to favorite",
-        product: await result
-    })
+        res.status(400).json({
+            message: "already added to favorite"
+        })
 }
 }
