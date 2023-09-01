@@ -16,6 +16,7 @@ export const addToFavorite = async (req,res) =>{
     try{
 
         result = await addTofavoriteModel(productId,userId);
+        console.log(result)
         res.status(200).json({
             message: "added to favorite",
             product: await result
@@ -23,6 +24,7 @@ export const addToFavorite = async (req,res) =>{
     }
 
     catch(e){
+        console.log(e)
         res.status(400).json({
             message: "already added to favorite"
         })

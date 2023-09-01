@@ -16,7 +16,7 @@ export const registerUser = async (req, res) => {
     
     if(emailExist){
         res.status(400).json({
-            message: "User already exists"
+            message: "Email already exists"
         })
         return ;
     }
@@ -34,14 +34,14 @@ export const loginUser = async (req, res) => {
     const user = await getUserByEmailModel(email);
     if (!user) {
         res.status(404).json({
-            message: "User not found"
+            message: "Email or password incorrect"
         })
         return;
     }
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
         res.status(400).json({
-            message: "Incorrect password"
+            message: "Email or password incorrect"
         })
         return;
     }
