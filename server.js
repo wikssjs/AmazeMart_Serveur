@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import express, { json } from 'express';
 import multer from 'multer';
-import { create } from 'express-handlebars';
 import { engine } from 'express-handlebars';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -11,7 +10,6 @@ import memorystore from 'memorystore';
 import passport from 'passport';
 import { getHomeData,addToCart} from './controllers/HomeData.js';
 import { addToFavorite, getProductById} from './controllers/product.js';
-import './authentification.js';
 import { getCart,deleteProductCart, addToCheckout, getCheckoutProducts,getCartCount } from './controllers/cart.js';
 import { incrementCart,decrementCart,verifyCoupon } from './controllers/cart.js';
 import { getCategories, getProductsByCategory } from './controllers/categories.js';
@@ -27,25 +25,12 @@ const upload = multer({ storage: storage });
 
 
 
-// Initialisation de handlebars
-app.engine('handlebars', engine({
-    helpers: {
-        afficheArgent: (nombre) => nombre && nombre.toFixed(2),
-        afficheEtoil: (nombre) => nombre && nombre.toFixed(1),
-        // afficheEtoil: (tab) => tab && tab.length.toFixed(1)
-    }
-}));
 
 // app.engine('handlebars', handlebars.engine);
 
 // Mettre l'engin handlebars comme engin de rendu
-app.set('view engine', 'handlebars');
 // Configuration de handlebars
-app.set('views', './views');
-
 // Création du constructeur de la base de données de session
-const MemoryStore = memorystore(session);
-
 // Ajout de middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
