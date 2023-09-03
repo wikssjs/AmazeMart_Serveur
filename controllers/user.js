@@ -4,14 +4,15 @@ addUserAdressModel,
 deleteUserAdressModel,
 getUserAdressModel
 } from "../model/user.js";
-import bcrypt from "bcrypt";
+import pkg from "bcrypt";
 import Jwt from "jsonwebtoken";
 
+const { hash, compare } = pkg;
 
 export const registerUser = async (req, res) => {
     const { fullname, email,phone, password } = req.body;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hash(password, 10);
     const emailExist = await getUserByEmailModel(email);
     
     if(emailExist){
@@ -38,7 +39,7 @@ export const loginUser = async (req, res) => {
         })
         return;
     }
-    const match = await bcrypt.compare(password, user.password);
+    const match = await compare(password, user.password);
     if (!match) {
         res.status(400).json({
             message: "Email or password incorrect"
