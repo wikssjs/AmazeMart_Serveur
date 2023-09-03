@@ -38,20 +38,6 @@ app.use(cors());
 app.use(helmet());
 app.use(compression());
 app.use(json());
-app.use(
-	session({
-		cookie: { maxAge: 1800000 },
-		name: process.env.npm_package_name,
-		store: new MemoryStore({ checkPeriod: 1800000 }),
-		resave: false,
-		saveUninitialized: false,
-		secret: process.env.SESSION_SECRET,
-	}),
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(express.static('public'));
 
 
 // Programmation de routes
