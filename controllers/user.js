@@ -4,7 +4,7 @@ addUserAdressModel,
 deleteUserAdressModel,
 getUserAdressModel
 } from "../model/user.js";
-import pkg from "bcrypt";
+import pkg from "bcryptjs";
 import Jwt from "jsonwebtoken";
 
 const { hash, compare } = pkg;
