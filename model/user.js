@@ -1,6 +1,7 @@
 import connectionPromise from "./connexion.js";
-import { hash,compare } from "bcrypt";
+import pkg from "bcryptjs";
 
+const { hash, compare } = pkg;
 export const registerUserModel = async (fullName, email,phone, password) => {
     let connection = await connectionPromise;
     await connection.run(
